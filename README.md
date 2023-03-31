@@ -1,1 +1,3 @@
 # talkAI
+
+The initial repository
