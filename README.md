@@ -1,3 +1,0 @@
-# talkAI
-
-The initial repository
