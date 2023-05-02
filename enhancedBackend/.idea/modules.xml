@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/talkAI.iml" filepath="$PROJECT_DIR$/.idea/talkAI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/enhancedBackend.iml" filepath="$PROJECT_DIR$/.idea/enhancedBackend.iml" />
     </modules>
   </component>
 </project>
