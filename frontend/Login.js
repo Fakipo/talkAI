@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import CharacterSelection from './CharacterSelection';
+import RegisterScreen from './RegisterScreen';
+
 
 export default function Login() {
+
+  const navigation = useNavigation();
+  
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isRegister, isClickedRegister] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -14,6 +21,14 @@ export default function Login() {
 
   if (isLoggedIn) {
     return <CharacterSelection />;
+  }
+
+  const handleRegister = () => {
+    isClickedRegister(true);
+  };
+
+  if(isRegister){
+    return <RegisterScreen />;
   }
 
   return (
@@ -35,9 +50,14 @@ export default function Login() {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate('RegisterScreen')}>  
-      <Text style={styles.registerButtonText}>Don't have an account? Sign up here.</Text> 
-      </TouchableOpacity>        
+      <TouchableOpacity
+        style={styles.registerButton}
+        onPress={() => navigation.navigate('Register')} // use handleRegister instead of navigation.navigate
+      >
+        <Text style={styles.registerButtonText}>
+          Don't have an account? Sign up here.
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -74,4 +94,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-});
+  registerButton: {
+    marginTop: 10,
+  },
+  registerButtonText: {
+      color: '#000',
+      fontSize: 16,
+    },
+  });
