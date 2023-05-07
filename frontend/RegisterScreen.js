@@ -20,6 +20,30 @@ const RegisterScreen = () => {
     console.log('Gender:', gender);
     console.log('Date of Birth:', dob);
     console.log('Phone Number:', phoneNumber);
+    
+    fetch('http://192.168.29.144:5000/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        firstName: `${firstName}`,
+        lastName: `${lastName}`,
+        email: `${email}`,
+        password: `${password}`,
+        gender: `${gender}`,
+        dob: `${dob}`,
+        phoneNumber: `${phoneNumber}`
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('we are here?')
+      console.log(data);
+    })
+    .catch(error => {
+      console.error(error);
+    });
   };
 
   return (
