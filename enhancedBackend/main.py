@@ -21,6 +21,30 @@ def api_call():
         return jsonify(error_message), 400, {'Content-Type': 'application/json'}
 
 
+@app.route('/login', methods=['POST'])
+def login():
+    try:
+        data = request.get_json()
+        email = data['email']
+        password = data['password']
+        conn = sqlite3.connect('talkAI.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
+        user_data = cursor.fetchone()
+        if user_data:
+            # If a user with the provided email exists in the database, check if the password matches
+            if user_data['password'] == password:
+                # If the password is correct, return the user data
+                return jsonify({'message': 'Logged IN Successfully'}), 200, {'Content-Type': 'application/json'}
+            else:
+                # If the password is incorrect, return None
+                return None
+        else:
+            # If a user with the provided email doesn't exist in the database, return None
+            return jsonify({'message': 'Wrong Email or Password'}), 400, {'Content-Type': 'application/json'}
+    except Exception as e:
+        error_message = {'error': str(e)}
+        return jsonify(error_message), 400, {'Content-Type': 'application/json'}
 
 
 @app.route('/register', methods=['POST'])

@@ -42,3 +42,4 @@ def register():
 
 # Close the connection to the database
 conn.close()
+

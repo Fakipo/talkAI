@@ -11,10 +11,28 @@ export default function Login() {
   
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isRegister, isClickedRegister] = useState(false);
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
+
+    fetch('http://192.168.29.144:5000/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: `${email}`,
+        password: `${password}`,
+      })
+    }).then(response => response.json())
+    .then(data => {
+      console.log('we are here?')
+      console.log(data);
+    })
+    .catch(error => {
+      console.error(error);
+    });
     // Your login logic here
     setIsLoggedIn(true);
   };
@@ -36,9 +54,9 @@ export default function Login() {
       <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
-        placeholder="Username"
-        onChangeText={text => setUsername(text)}
-        value={username}
+        placeholder="email"
+        onChangeText={text => setEmail(text)}
+        value={email}
       />
       <TextInput
         style={styles.input}
