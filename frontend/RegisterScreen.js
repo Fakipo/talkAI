@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
+
+
 
 const RegisterScreen = () => {
+  const navigation = useNavigation();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -10,7 +14,7 @@ const RegisterScreen = () => {
   const [gender, setGender] = useState('');
   const [dob, setDOB] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-
+  const [isRegistered, setIsRegistered] = useState(false);
   const handleRegister = () => {
     // Handle user registration logic here
     console.log('First Name:', firstName);
@@ -36,15 +40,30 @@ const RegisterScreen = () => {
         phoneNumber: `${phoneNumber}`
       })
     })
-    .then(response => response.json())
+    .then(response => {
+      if(response.ok){
+        return response.json()
+      }else{
+        throw new Error('Wrong email Id or Password');
+      }
+    
+    })
     .then(data => {
-      console.log('we are here?')
+      alert('succesfullyRegistered');
+      setIsRegistered(true);
+      console.log('we are here?');
       console.log(data);
     })
     .catch(error => {
-      console.error(error);
+      alert(error);
     });
   };
+
+  useEffect(() => {
+    if (isRegistered) {
+      navigation.navigate('Login');
+    }
+  }, [isRegistered]);
 
   return (
     <View style={styles.container}>

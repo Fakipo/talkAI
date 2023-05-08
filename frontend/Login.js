@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import CharacterSelection from './CharacterSelection';
@@ -10,7 +10,6 @@ export default function Login() {
   const navigation = useNavigation();
   
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isRegister, isClickedRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -25,29 +24,31 @@ export default function Login() {
         email: `${email}`,
         password: `${password}`,
       })
-    }).then(response => response.json())
+    }).then(response => 
+      {
+        console.log('status = ' +  response.status);
+        if (response.status === 200){
+          return response.json()
+        }else{
+          console.log('we are ');
+          throw new Error('Wrong email Id or Password');
+      }
+      })
     .then(data => {
-      console.log('we are here?')
+      console.log('we are here?');
       console.log(data);
+      alert('successfully logged in');
+      setIsLoggedIn(true);
     })
     .catch(error => {
-      console.error(error);
+      alert('Wrong email id or password');
     });
     // Your login logic here
-    setIsLoggedIn(true);
   };
 
-  if (isLoggedIn) {
-    return <CharacterSelection />;
-  }
-
-  const handleRegister = () => {
-    isClickedRegister(true);
-  };
-
-  if(isRegister){
-    return <RegisterScreen />;
-  }
+    if (isLoggedIn) {
+      return <CharacterSelection />
+    }
 
   return (
     <View style={styles.container}>
