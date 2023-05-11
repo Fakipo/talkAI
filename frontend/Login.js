@@ -3,6 +3,7 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 import { useNavigation } from '@react-navigation/native';
 import CharacterSelection from './CharacterSelection';
 import RegisterScreen from './RegisterScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function Login() {
@@ -35,12 +36,16 @@ export default function Login() {
       }
       })
     .then(data => {
+      const token = data.token;
+      console.log(token);
       console.log('we are here?');
       console.log(data);
       alert('successfully logged in');
+      AsyncStorage.setItem('token', data.token);
       setIsLoggedIn(true);
     })
     .catch(error => {
+      console.log(error);
       alert('Wrong email id or password');
     });
     // Your login logic here
