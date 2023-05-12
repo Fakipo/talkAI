@@ -1,18 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, StackActions, CommonActions } from '@react-navigation/native';
 import CharacterSelection from './CharacterSelection';
 import RegisterScreen from './RegisterScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { userLoginCheck } from './CheckJWT';
+import { NavigationActions } from 'react-navigation';
+
+
+
 
 
 export default function Login() {
 
   const navigation = useNavigation();
-  
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    async function checkUserLogin() {
+      const result = await userLoginCheck();
+      setIsLoggedIn(result);
+    }
+    checkUserLogin();
+  }, []);
+  
+  useEffect(() => {
+    if (isLoggedIn) {
+      // Reset the navigation stack so the user can't go back to the login screen
+      const resetAction = CommonActions.reset({
+        index: 0,
+        routes: [
+          { name: 'CharacterSelection' },
+        ],
+      });
+      navigation.dispatch(resetAction);
+    }
+  }, [isLoggedIn]);
 
   const handleLogin = () => {
 
@@ -43,6 +68,14 @@ export default function Login() {
       alert('successfully logged in');
       AsyncStorage.setItem('token', data.token);
       setIsLoggedIn(true);
+      navigation.navigate('CharacterSelection');
+      const resetAction = StackActions.reset({
+        index: 0,
+        actions: [
+          NavigationActions.navigate({ routeName: 'CharacterSelection' }),
+        ]
+      });
+      navigation.dispatch(resetAction);
     })
     .catch(error => {
       console.log(error);
@@ -51,9 +84,7 @@ export default function Login() {
     // Your login logic here
   };
 
-    if (isLoggedIn) {
-      return <CharacterSelection />
-    }
+
 
   return (
     <View style={styles.container}>

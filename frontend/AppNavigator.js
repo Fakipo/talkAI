@@ -21,6 +21,8 @@ function LoginStack() {
     <Stack.Navigator>
       <Stack.Screen name="Login" component={Login}/>
       <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen name="CharacterSelection" component={CharacterSelection} />
+      <Stack.Screen name="Answer" component={Answer} />
     </Stack.Navigator>
   );
 }
@@ -35,24 +37,10 @@ function HomeStack() {
 }
 
 function AppNavigator() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    async function checkUserLogin() {
-      const result = await userLoginCheck();
-      setIsLoggedIn(result);
-    }
-
-    checkUserLogin();
-  }, []);
 
   return (
     <NavigationContainer>
-      {isLoggedIn ? (
-        <HomeStack />
-      ) : (
         <LoginStack />
-      )}
     </NavigationContainer>
   );
 }

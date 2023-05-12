@@ -1,25 +1,29 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Answer from './Answer';
+
 export default function CharacterSelection() {
   const [selectedOption, setSelectedOption] = useState(null);
-  const [clickedNext, setClickedNext] = useState(false);
+  const navigation = useNavigation();
+
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
   };
 
   const handleNext = () => {
-    setClickedNext(true);
-    // Navigate to the next screen with the selected option
+    navigation.navigate('Answer', { character: selectedOption });
   };
 
-  if(clickedNext){
-    return <Answer character = {selectedOption}/>
-  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Choose your character:</Text>
+      <TouchableOpacity style={styles.logoutButton} onPress={() => {
+        // Handle logout
+      }}>
+        <Text style={styles.buttonText}>Logout</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         style={[
           styles.button,
@@ -56,13 +60,16 @@ export default function CharacterSelection() {
       >
         <Text style={styles.buttonText}>Batman</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.nextButton} onPress={handleNext} disabled={!selectedOption}>
+      <TouchableOpacity
+        style={styles.nextButton}
+        onPress={handleNext}
+        disabled={!selectedOption}
+      >
         <Text style={styles.buttonText}>Next</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -94,10 +101,21 @@ const styles = StyleSheet.create({
   nextButton: {
     width: 200,
     height: 40,
-    backgroundColor: 'blue',
+    backgroundColor: '#D0D3D4', // Change the color here
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 20,
+  },
+  logoutButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    padding: 10,
+  },
+  logoutButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#007AFF',
   },
 });
