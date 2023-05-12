@@ -6,11 +6,12 @@ from flask import Flask, request, jsonify
 from createTables import create_table
 import jwt
 import datetime
-
+from config import Config
 # ...
 
 app = Flask(__name__)
 conn = sqlite3.connect('talkAI.db')
+app.config.from_object('config.Config')
 
 
 @app.route('/api_call', methods=['POST'])
@@ -48,7 +49,7 @@ def login():
                     'sub': user_data[0],
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
                 }
-                token = jwt.encode(payload, 'secret_key', algorithm='HS256')
+                token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
                 return jsonify({'message': 'Logged IN Successfully', 'token': token}), 200,  {'Content-Type': 'application/json'}
             else:
                 # If the password is incorrect, return None
@@ -84,16 +85,20 @@ def register():
         error_message = {'error': str(e)}
         return jsonify(error_message), 400, {'Content-Type': 'application/json'}
 
-# @app.route('/check_token', methods=['GET'])
-# def check_token():
-#     try:
-#         token = request.headers.get('Authorization').split()[1]
-#         payload = jwt.decode(token, app.config['secret_key'], algorithms=['HS256'])
-#         return jsonify({'message': 'Token is valid'}), 200
-#     except jwt.ExpiredSignatureError:
-#         return jsonify({'message': 'Token has expired'}), 401
-#     except (jwt.InvalidTokenError, IndexError):
-#         return jsonify({'message': 'Invalid token'}), 401
+@app.route('/check_token', methods=['GET'])
+def check_token():
+    try:
+        token = request.headers.get('Authorization').split()[1]
+        print('token is', token)
+        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        print('all working fine')
+        return jsonify({'message': 'Token is valid'}), 200
+    except jwt.ExpiredSignatureError as e:
+        print('we are here throwing errror??? ', e)
+        return jsonify({'message': 'Token has expired'}), 401
+    except (jwt.InvalidTokenError, IndexError):
+        print('we are here throwing errror???')
+        return jsonify({'message': 'Invalid token'}), 401
 
 if __name__ == '__main__':
     create_table(conn)

@@ -1,5 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import { useState, useEffect } from 'react';
 
 import Login from './Login';
 import RegisterScreen from './RegisterScreen';
@@ -10,7 +11,7 @@ import Answer from './Answer';
 
 const Stack = createStackNavigator();
 import { createNavigationContainerRef } from '@react-navigation/native';
-
+import { userLoginCheck } from './CheckJWT';
 // const navigationRef = createNavigationContainerRef();
 
 
@@ -34,13 +35,23 @@ function HomeStack() {
 }
 
 function AppNavigator() {
-  const isLoggedIn = false; // set this to true if user is logged in
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    async function checkUserLogin() {
+      const result = await userLoginCheck();
+      setIsLoggedIn(result);
+    }
+
+    checkUserLogin();
+  }, []);
+
   return (
     <NavigationContainer>
       {isLoggedIn ? (
         <HomeStack />
       ) : (
-        <LoginStack /> // Pass navigationRef as a prop
+        <LoginStack />
       )}
     </NavigationContainer>
   );
