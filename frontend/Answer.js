@@ -1,8 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation, StackActions, CommonActions } from '@react-navigation/native';
+import { userLoginCheck } from './CheckJWT';
 
-export default function Answer (props){
-  console.log(props.character);
+
+export default function Answer (){
+
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  useEffect(() => {
+    async function checkUserLogin() {
+      const result = await userLoginCheck();
+      setIsLoggedIn(result);
+    }
+    checkUserLogin();
+  }, []);
+  
+  useEffect(() => {
+    if (!isLoggedIn) {
+      // Reset the navigation stack so the user can't go back to the login screen
+      const resetAction = CommonActions.reset({
+        index: 0,
+        routes: [
+          { name: 'Login' },
+        ],
+      });
+      navigation.dispatch(resetAction);
+    }
+  }, [isLoggedIn]);
+
+
+  const route = useRoute();
+  const { character } = route.params;
+
+  console.log('our selected character is', character);
   const [inputText, setInputText] = useState('');
   const [outputText, setOutputText] = useState('');
 
@@ -19,19 +51,18 @@ export default function Answer (props){
       },
       body: JSON.stringify({
         question: `${inputText}`,
-        character: `${props.character}`
+        character: `${character}`
       })
     })
     .then(response => response.json())
     .then(data => {
-      console.log('we are here?')
+      console.log('we are here in the answer??')
       console.log(data);
       setOutputText(data);
     })
     .catch(error => {
       console.error(error);
     });
-    // Process the input and set the output
   };
 
   return (

@@ -1,11 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import Answer from './Answer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation, StackActions, CommonActions } from '@react-navigation/native';
+import { userLoginCheck } from './CheckJWT';
 
 export default function CharacterSelection() {
   const [selectedOption, setSelectedOption] = useState(null);
   const navigation = useNavigation();
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+
+
+  useEffect(() => {
+    async function checkUserLogin() {
+      const result = await userLoginCheck();
+      setIsLoggedIn(result);
+    }
+    checkUserLogin();
+  }, []);
+  
+  useEffect(() => {
+    if (!isLoggedIn) {
+      // Reset the navigation stack so the user can't go back to the login screen
+      const resetAction = CommonActions.reset({
+        index: 0,
+        routes: [
+          { name: 'Login' },
+        ],
+      });
+      navigation.dispatch(resetAction);
+    }
+  }, [isLoggedIn]);
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
@@ -15,12 +40,48 @@ export default function CharacterSelection() {
     navigation.navigate('Answer', { character: selectedOption });
   };
 
+  const handleLogout = async () => {
+
+    const token = await AsyncStorage.getItem('token');
+
+    fetch('http://192.168.29.144:5000/logout', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+  })
+  .then(response => {
+    if (response.ok) {
+      // remove token from AsyncStorage or wherever it's stored
+      AsyncStorage.removeItem('token')
+        .then(() => {
+          // navigate to login screen or home screen
+          alert('successfully logged out');
+          navigation.navigate('Login');
+          const resetAction = CommonActions.reset({
+            index: 0,
+            routes: [
+              { name: 'Login' },
+            ],
+          });
+          navigation.dispatch(resetAction);
+        })
+        .catch(error => console.error(error))
+    } else {
+      console.error('Error logging out')
+      navigation.navigate('Login');
+    }
+  })
+  .catch(error => console.error(error))
+  }
+
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Choose your character:</Text>
       <TouchableOpacity style={styles.logoutButton} onPress={() => {
-        // Handle logout
+        handleLogout();
       }}>
         <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>

@@ -69,11 +69,11 @@ export default function Login() {
       AsyncStorage.setItem('token', data.token);
       setIsLoggedIn(true);
       navigation.navigate('CharacterSelection');
-      const resetAction = StackActions.reset({
+      const resetAction = CommonActions.reset({
         index: 0,
-        actions: [
-          NavigationActions.navigate({ routeName: 'CharacterSelection' }),
-        ]
+        routes: [
+          { name: 'CharacterSelection' },
+        ],
       });
       navigation.dispatch(resetAction);
     })

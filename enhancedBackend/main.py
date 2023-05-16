@@ -17,15 +17,38 @@ app.config.from_object('config.Config')
 @app.route('/api_call', methods=['POST'])
 def api_call():
     try:
-        print('we are here')
         data = request.get_json()
         question = data['question']
         character = data['character']
-        print(question)
-        print(character)
-        message = 'Paras'
-        return jsonify(message), 200, {'Content-Type': 'application/json'}
+        url = "https://api.openai.com/v1/chat/completions"
+        headers = {
+             "Authorization": "Bearer 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",
+             "Content-Type": "application/json"
+        }
+        data = {
+        "model": "gpt-3.5-turbo",
+        "messages": [
+            {
+             "role": "system",
+             "content": "You are " + character + ", when answering try to be funny while staying in the context of the question and keep the answer less than 25 words"
+             },
+            {
+              "role": "user",
+              "content": question,
+            }
+            ]
+        }
+        response = requests.post(url, headers=headers, json=data)
+
+        answer = response.json()["choices"][0]["message"]["content"]
+        return jsonify(answer), 200, {'Content-Type': 'application/json'}
+
+        # print(question)
+        # print(character)
+        # message = 'Paras'
+        # return jsonify(message), 200, {'Content-Type': 'application/json'}
     except Exception as e:
+        print(e);
         error_message = {'error': str(e)}
         return jsonify(error_message), 400, {'Content-Type': 'application/json'}
 
@@ -99,6 +122,21 @@ def check_token():
     except (jwt.InvalidTokenError, IndexError):
         print('we are here throwing errror???')
         return jsonify({'message': 'Invalid token'}), 401
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    try:
+        token = request.headers.get('Authorization').split()[1]
+        print('we are logging out token = ', token )
+        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        payload['exp'] = datetime.datetime.utcnow()
+        return jsonify({'message': 'Logged out successfully'}), 200, {'Content-Type': 'application/json'}
+    except jwt.ExpiredSignatureError as e:
+        print('we are here log out error 1')
+        return jsonify({'message': 'Token has expired'}), 401, {'Content-Type': 'application/json'}
+    except (jwt.InvalidTokenError, IndexError):
+        print('we are here log out error 1')
+        return jsonify({'message': 'Invalid token'}), 401, {'Content-Type': 'application/json'}
 
 if __name__ == '__main__':
     create_table(conn)
