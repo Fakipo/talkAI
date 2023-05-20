@@ -67,11 +67,13 @@ export default function Answer (){
 
   return (
     <View style={styles.container}>
+      <Text style={styles.characterLabel}>Selected Character:</Text>
+      <Text style={styles.characterText}>{character}</Text>
       <TextInput
         style={styles.input}
         value={inputText}
         onChangeText={handleInputChange}
-        placeholder="Enter text"
+        placeholder="Ask your question"
       />
       <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
         <Text style={styles.buttonText}>Submit</Text>
@@ -88,12 +90,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   input: {
-    height: 40,
+    height: 60, // Increase the height
     width: '80%',
     borderColor: 'gray',
     borderWidth: 1,
     paddingHorizontal: 10,
     marginBottom: 20,
+    fontWeight: 'bold', // Make the text bold
   },
   button: {
     backgroundColor: 'blue',
@@ -108,5 +111,18 @@ const styles = StyleSheet.create({
   output: {
     marginTop: 20,
     fontSize: 20,
+  },
+  characterLabel: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 2,
+  },
+  characterText: {
+    fontSize: 30, // Increase the font size
+    fontWeight: 'bold', // Make the text bold
+    marginTop: 10, // Adjust the spacing above the input box
+    paddingVertical: 10, // Increase the padding
+    paddingHorizontal: 20, // Increase the padding
+    marginBottom: 50, // Increase the marginBottom value
   },
 });
