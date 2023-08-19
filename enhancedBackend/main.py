@@ -22,7 +22,7 @@ def api_call():
         character = data['character']
         url = "https://api.openai.com/v1/chat/completions"
         headers = {
-             "Authorization": "Bearer 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",
+             "Authorization": "Bearer sk-bwrL0vHcZWbcyNzLBc5CT3BlbkFJGdJGpC6EBQuvzUrtEpO",
              "Content-Type": "application/json"
         }
         data = {
